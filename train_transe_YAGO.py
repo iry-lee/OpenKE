@@ -27,7 +27,7 @@ transe = TransE(
 	p_norm = 1, 
 	norm_flag = True)
 
-
+# 怎么把类型约束引入进来？
 # define the loss function
 model = NegativeSampling(
 	model = transe, 
