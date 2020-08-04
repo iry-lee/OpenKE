@@ -30,3 +30,4 @@ class NegativeSampling(Strategy):
 		if self.l3_regul_rate != 0:
 			loss_res += self.l3_regul_rate * self.model.l3_regularization()
 		return loss_res
+		

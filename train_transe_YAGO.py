@@ -28,6 +28,7 @@ transe = TransE(
 	norm_flag = True)
 
 # 怎么把类型约束引入进来？
+# 首先得load ontology数据，然后需要搭建一个新的loss
 # define the loss function
 model = NegativeSampling(
 	model = transe, 

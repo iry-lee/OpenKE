@@ -13,7 +13,10 @@ class TransE(Model):
 		self.epsilon = epsilon
 		self.norm_flag = norm_flag
 		self.p_norm = p_norm
-
+		
+		# 这里的ent_tot与rel_tot在TransE实例化时确定，在train_transe_YAGO.py中，
+		# ent_tot = train_dataloader.get_ent_tot()
+		# rel_tot = train_dataloader.get_rel_tot() 
 		self.ent_embeddings = nn.Embedding(self.ent_tot, self.dim)
 		self.rel_embeddings = nn.Embedding(self.rel_tot, self.dim)
 
@@ -45,6 +48,10 @@ class TransE(Model):
 
 	def _calc(self, h, t, r, mode):
 		if self.norm_flag:
+			# 这里为什么dim=-1?
+			# 这里涉及到python的一个特性，假如一个数组A的长度为n
+			# 如果要访问数组的最后一个元素，可以通过A[-1]实现
+			# 这里同理，dim=-1，即最后一个维度。
 			h = F.normalize(h, 2, -1)
 			r = F.normalize(r, 2, -1)
 			t = F.normalize(t, 2, -1)
@@ -57,14 +64,19 @@ class TransE(Model):
 		else:
 			score = (h + r) - t
 		score = torch.norm(score, self.p_norm, -1).flatten()
-		return score
+		return score # torch.Size([70746]) 
 
+	# forward函数随着这个类的调用，自动执行
+	# 这里的 batch_h、batch_t、batch_r 是什么意思？
+	# 是 头实体的vector、尾实体的vector、关系的vector 吗？
+	# 这里的mode是采样方式，默认为normal普通方式
 	def forward(self, data):
 		batch_h = data['batch_h']
 		batch_t = data['batch_t']
 		batch_r = data['batch_r']
 		mode = data['mode']
-		h = self.ent_embeddings(batch_h)
+		# h、r和t的size(): [70746, 200]
+		h = self.ent_embeddings(batch_h)  
 		t = self.ent_embeddings(batch_t)
 		r = self.rel_embeddings(batch_r)
 		score = self._calc(h ,t, r, mode)
@@ -73,6 +85,7 @@ class TransE(Model):
 		else:
 			return score
 
+	# 用于训练，在NegativeSampling.py中被调用
 	def regularization(self, data):
 		batch_h = data['batch_h']
 		batch_t = data['batch_t']
@@ -85,6 +98,7 @@ class TransE(Model):
 				 torch.mean(r ** 2)) / 3
 		return regul
 
+	# 用于test测试，在Tester.py中被调用
 	def predict(self, data):
 		score = self.forward(data)
 		if self.margin_flag:
