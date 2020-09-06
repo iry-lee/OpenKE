@@ -95,7 +95,10 @@ class TrainDataLoader(object):
 		if self.nbatches == None:
 			self.nbatches = self.tripleTotal // self.batch_size
 		self.batch_seq_size = self.batch_size * (1 + self.negative_ent + self.negative_rel)
-
+		print("self.batch_seq_size: " + str(self.batch_seq_size))
+		print("self.batch_size: " + str(self.batch_size))
+		print("self.negative_ent: " + str(self.negative_ent))
+		print("self.negative_rel: " + str(self.negative_rel))
 		self.batch_h = np.zeros(self.batch_seq_size, dtype=np.int64)
 		self.batch_t = np.zeros(self.batch_seq_size, dtype=np.int64)
 		self.batch_r = np.zeros(self.batch_seq_size, dtype=np.int64)

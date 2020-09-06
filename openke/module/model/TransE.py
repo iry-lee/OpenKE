@@ -64,7 +64,6 @@ class TransE(Model):
 		else:
 			score = (h + r) - t
 		score = torch.norm(score, self.p_norm, -1).flatten()
-		print(score.size())
 		return score # torch.Size([70746]) 70746刚好是训练数据条数的1/(3.84)?
 
 	# forward函数随着这个类的调用，自动执行
